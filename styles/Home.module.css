@@ -1,0 +1,106 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 3rem;
+  color: #087480;
+  text-align: center;
+}
+
+.description {
+  margin: 0 0 3rem;
+  font-size: 1.25rem;
+  text-align: center;
+  color: #666;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 3rem;
+}
+
+.card {
+  padding: 2rem;
+  border: 2px solid #087480;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(8, 116, 128, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 12px rgba(8, 116, 128, 0.2);
+}
+
+.card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  color: #087480;
+}
+
+.card p {
+  margin: 0;
+  line-height: 1.5;
+  color: #666;
+  word-break: break-word;
+}
+
+.diagramSection {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 2rem;
+}
+
+.diagramTitle {
+  font-size: 2rem;
+  color: #087480;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  border-top: 2px solid #087480;
+  background-color: #f8f9fa;
+}
+
+.footer p {
+  margin: 0;
+  color: #087480;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
