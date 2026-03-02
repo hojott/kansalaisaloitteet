@@ -4,6 +4,10 @@ interface KansalaisaloiteCache {
   data: Kansalaisaloite[]
 }
 
+interface KansalaisaloiteError {
+  error: string
+}
+
 interface Kansalaisaloite {
   id: string
   url: {
@@ -34,4 +38,4 @@ interface Kansalaisaloite {
   supportStatementsRemoved?: string // xsd:dateTime
 }
 
-export type { Kansalaisaloite, KansalaisaloiteCache }
+export type { Kansalaisaloite, KansalaisaloiteCache, KansalaisaloiteError }
