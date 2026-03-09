@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Keskustelualoite } from "../types/keskustelualoitteet"
 import { EduskuntaTunniste } from '../types/aloitescraper'
+import { Aloite } from '../types/aloite'
 
 const getKeskustelualoitteet = async (ids: EduskuntaTunniste[]): Promise<Keskustelualoite[]> => {
   const idsSmashed = ids.map(id => {
@@ -15,7 +16,10 @@ const getKeskustelualoitteet = async (ids: EduskuntaTunniste[]): Promise<Keskust
       console.error(err)
       return []
     })
-
 }
+
+//const addEduskuntaProcesses = async (aloite: Aloite, keskustelualoite: Keskustelualoite) => {
+//  const kasittelyvaiheet = keskustelualoite.
+//}
 
 export { getKeskustelualoitteet }

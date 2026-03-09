@@ -47,7 +47,7 @@ const GET = async (req: NextRequest): Promise<NextResponse<EduskuntaTunniste[] |
 
         console.log("All sites scraped")
 
-        cache.dateUpdated = new Date(0)
+        cache.dateUpdated = new Date()
         cache.data = eduskuntaTunnisteet
 
         return NextResponse.json(eduskuntaTunnisteet)

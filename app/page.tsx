@@ -1,51 +1,48 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { getKansalaisaloitteet } from "./services/kansalaisaloiteService";
-import { Kansalaisaloite } from "./types/kansalaisaloitteet";
 import styles from "./page.module.css";
-import { Keskustelualoite } from "./types/keskustelualoitteet";
+import { getKansalaisaloitteet } from "./services/kansalaisaloiteService";
 import { getKeskustelualoitteet } from "./services/keskustelualoiteService";
-import { getEduskuntaTunnisteet } from "./services/aloitescraperService";
-import { Aloite } from "./types/aloite";
-
-interface KansalaisaloiteData {
-  all: Aloite[]
-  enoughVoters: Aloite[]
-  notEnoughVoters: Aloite[]
-  verified: Aloite[]
-  couldntVerify: Aloite[]
-  initiated: Aloite[]
-  committeeHandled: Aloite[]
-  rejected: Aloite[]
-  expired: Aloite[]
-  firstReaded: Aloite[]
-  secondReaded: Aloite[]
-  approved: Aloite[]
-}
+import { addEduskuntaTunnisteet } from "./services/aloitescraperService";
+import { Aloite, AloiteData } from "./types/aloite";
+import { AloiteState, AloiteStep } from "./types/enums";
 
 export default function Home() {
-  const [kansalaisaloitteet, setKansalaisaloitteet] = useState<Kansalaisaloite[] | null>(null);
-  const [passedAloitteet, setPassedAloitteet] = useState<Kansalaisaloite[] | null>(null)
-  const [keskusteluAloitteet, setKeskustelualoitteet] = useState<Keskustelualoite[] | null>(null)
+  const [aloitteet, setAloitteet] = useState<AloiteData>({
+    all: [],
+    enoughVoters: [],
+    notEnoughVoters: [],
+    verified: [],
+    initiated: [],
+    committeeHandled: [],
+    rejected: [],
+    expired: [],
+    firstReaded: [],
+    secondReaded: [],
+    approved: []
+  });
 
   useEffect(() => {
     getKansalaisaloitteet()
-      .then(data => {
-        setKansalaisaloitteet(data)
-        const newPassedAloitteet = data.filter(k => k.state == "DONE")
-        console.log(newPassedAloitteet)
-        setPassedAloitteet(newPassedAloitteet)
-        const passedAloiteIds = newPassedAloitteet.map(k => k.id)
-        getEduskuntaTunnisteet(passedAloiteIds)
-          .then(data => {
-            getKeskustelualoitteet(data)
-              .then(data => {
-                const newKeskustelualoitteet = data
-                console.log(newKeskustelualoitteet)
-                setKeskustelualoitteet(data)
+      .then(newAloitteet => {
+        const newInitiatedAloitteet = newAloitteet.filter(
+          aloite => aloite.step == AloiteStep.INITIATION
+        )
+
+        addEduskuntaTunnisteet(newInitiatedAloitteet)
+          .then(() => {
+            getKeskustelualoitteet(newInitiatedAloitteet.map(aloite => {
+              if (aloite.eduskuntaTunniste) {
+                return {id: aloite.eduskuntaTunniste}
+              } else {
+                return {id: ""}
+              }
+            }))
+              .then(res => {
+                console.log(res[0])
               })
-          })      
+          })
       })
   }, [])
 
@@ -53,10 +50,10 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
-          Kansalaisaloitteet
-          {kansalaisaloitteet !== null ? kansalaisaloitteet.map(k => {
-            return k.state == "CANCELED" ? k.name.fi : ""
-          }).join(" ") : ""}
+          Kansalaisaloitteet {"\n - "}
+          {aloitteet.all.map(k => {
+            return k.step == AloiteStep.INITIATION ? k.name : ""
+          }).join("\n - ")}
 
         </div>
       </main>

@@ -1,19 +1,21 @@
 import axios from 'axios'
 import { EduskuntaTunniste } from "../types/aloitescraper"
+import { Aloite } from '../types/aloite'
 
-const getEduskuntaTunnisteet = async (ids: string[]): Promise<EduskuntaTunniste[]> => {
-  const idsCut = ids.map(id => {
-    return id.replace("https://www.kansalaisaloite.fi/api/v1/initiatives/", "") // 131
-  }).join(",")
-  return axios.get(`/api/aloitescraper?ids=${idsCut}`)
+const addEduskuntaTunnisteet = async (aloitteet: Aloite[]): Promise<boolean> => {
+  const idsSmashed = aloitteet.map(aloite => aloite.kansalaisaloiteId).join(",")
+
+  return axios.get(`/api/aloitescraper?ids=${idsSmashed}`)
     .then(res => {
-      const eduskuntaTunnisteet: EduskuntaTunniste[] = res.data
-      return eduskuntaTunnisteet
+      aloitteet.forEach((aloite, i) => {
+        aloite.eduskuntaTunniste = res.data[i].id
+      })
+      return true
     })
     .catch(err => {
       console.error(err)
-      return []
+      return false
     })
 }
 
-export { getEduskuntaTunnisteet }
+export { addEduskuntaTunnisteet }

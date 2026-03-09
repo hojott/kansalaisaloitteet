@@ -15,8 +15,8 @@ interface Kansalaisaloite {
     sv?: string
   }
   modified?: string // xsd:dateTime, "2012-11-01T13:50:30+02:00"
-  state?: string // ACCEPTED / DONE / CANCELLED
-  stateDate?: string // xsd:dateTime
+  state: string // ACCEPTED / DONE / CANCELLED
+  stateDate: string // xsd:dateTime
   supportCount?: number
   externalSupportCount?: number
   totalSupportCount?: number

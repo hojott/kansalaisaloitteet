@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from 'axios'
-import { parseStringPromise } from 'xml2js';
+import { JSDOM } from "jsdom"
 import { Keskustelualoite, KeskustelualoiteCache, KeskustelualoiteError } from "@/app/types/keskustelualoitteet";
 
 const constructor = (initial: KeskustelualoiteCache): KeskustelualoiteCache => {
@@ -17,8 +17,10 @@ const GET = async (req: NextRequest): Promise<NextResponse<Keskustelualoite[] | 
       throw new Error("No ids!")
     }
 
+    const parser = new JSDOM().window.DOMParser
+
     const link = `https://avoindata.eduskunta.fi/api/v1/tables/VaskiData/rows`
-    const keskustelualoitePromises: Promise<Keskustelualoite>[] = []
+    const keskustelualoitePromises: Promise<XMLDocument | null>[] = []
     let params: string
 
     const currentDate = new Date()
@@ -50,15 +52,18 @@ const GET = async (req: NextRequest): Promise<NextResponse<Keskustelualoite[] | 
           const xmlKeskustelualoite = oikeaKeskustelualoite[XML_DATA]
           xmlKeskustelualoite.replace("\\", "")
 
-          return parseStringPromise(xmlKeskustelualoite)
+          return parser.parseFromString(xmlKeskustelualoite, "text/xml")
         })
       )
     })
 
     return Promise.all(keskustelualoitePromises)
-      .then(keskustelualoitteet => {
-        keskustelualoitteet = keskustelualoitteet.filter(aloite => !!aloite)
+      .then(xmlAloitteet => {
+        const xmlAloitteetNotNull = xmlAloitteet.filter(aloite => !!aloite)
         console.log("All keskustelualoitteet resolved")
+        const keskustelualoitteet = xmlAloitteetNotNull.map(aloite => {
+          return {data: aloite}
+        })
 
         cache.dateUpdated = new Date(0)
         cache.data = keskustelualoitteet

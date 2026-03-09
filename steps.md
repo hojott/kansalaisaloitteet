@@ -2,8 +2,10 @@
 
 Aloite -> Tarkistus
        -> Ei kannattajia
+       -> Pysäytetty
 
 Tarkistus -> Vireilletulo
+          -> Ei kannattajia
 
 Vireilletulo -> Valiokuntakäsittely
              -> Hylätään
